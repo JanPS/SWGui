@@ -7,7 +7,7 @@
 
 # QT-Version von SWGui
 
-# Version 2.1.3 mit Datenbanken-Tools vom 31.08.2012
+# Version 2.2 mit Inter-Thread-Kommunikation vom 24.01.2013
 
 # Import & Init .........................................................
 
@@ -99,11 +99,22 @@ SWKeyTable={
     }
 
 
+
+
+def SWdoCmd(cmd):
+    SWDo(TheWin,"doCmd", Qt.QueuedConnection, QtCore.Q_ARG(type(cmd),cmd) );
+
+def SWdo(objekt, methode, *args):
+    apply(QtCore.QMetaObject.invokeMethod,[objekt, methode,QtCore.Qt.QueuedConnection]+
+          map(lambda x: QtCore.Q_ARG(type(x),x) ,list(args)))
+          
+
 class SWWidget(QtGui.QWidget):
     def __init__(self): 
         QtGui.QWidget.__init__(self)
         self.commands={}
         self.anyKeyCommand=None
+    def doCmd(self,cmd): return eval(cmd)
     def keyPressEvent(self,event):
         if SWKeyTable.has_key(event.key()):  
             te=SWKeyTable[event.key()]
@@ -138,6 +149,8 @@ def setAnyKeyCommand(cmd):
     
 
 SWisRunning=False
+
+
 def SWinit():
     global TheApp,TheMainWin,TheWin,TheCursor,TheMainContainer
     TheApp = QtGui.QApplication([])
@@ -154,6 +167,8 @@ def SWinit():
     TheMainWin.connect(TheWin, QtCore.SIGNAL("closed()"),SWclose)
     TheMainWin.setSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Preferred)
     TheWin.setSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Preferred)
+
+
 
 
 def SWshow(*args):
