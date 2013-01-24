@@ -2350,7 +2350,7 @@ def scalarProduct(a,b):
 #-----------------------
 
 
-print "SWGui V2.1.3 - 31.08.2012"
+print "SWGui V2.2 - 24.01.2013"
 
 
 #------------------------- Thread support
